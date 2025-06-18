@@ -15,8 +15,9 @@ func newRootCmd(version string) *cobra.Command {
 		},
 	}
 
-	cmd.AddCommand(newVersionCmd(version)) // version subcommand
-	cmd.AddCommand(newScanCmd())           // scan subcommand
+	cmd.AddCommand(newVersionCmd(version))
+	cmd.AddCommand(newScanCmd())
+	cmd.AddCommand(newConnectCmd())
 
 	return cmd
 }
