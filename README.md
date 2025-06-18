@@ -10,7 +10,7 @@
 
 CLI controller for Zengge LED devices.
 
-> All thanks to the great research work of [@8none1](https://github.com/8none1): [zengge_lednetwf](https://github.com/8none1/zengge_lednetwf/)
+> Only possible thanks to the research done by [@8none1](https://github.com/8none1): [zengge_lednetwf](https://github.com/8none1/zengge_lednetwf/)
 
 ## Usage
 
