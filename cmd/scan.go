@@ -4,7 +4,6 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
@@ -15,8 +14,7 @@ import (
 )
 
 type scanOptions struct {
-	device     string
-	duration   time.Duration
+	bleOptions
 	duplicates bool
 }
 
@@ -44,16 +42,14 @@ func newScanCmd() *cobra.Command {
 func (o *scanOptions) run(cmd *cobra.Command, args []string) error {
 	d, err := dev.NewDevice(o.device)
 	if err != nil {
-		log.Fatalf("can't new device : %s", err)
+		return fmt.Errorf("can't new device : %s", err)
 	}
 	ble.SetDefaultDevice(d)
 
 	// Scan for specified durantion, or until interrupted by user.
 	fmt.Printf("Scanning for %s...\n", o.duration)
 	ctx := ble.WithSigHandler(context.WithTimeout(context.Background(), o.duration))
-	chkErr(ble.Scan(ctx, o.duplicates, advHandler, nil))
-
-	return nil
+	return chkErr(ble.Scan(ctx, o.duplicates, advHandler, nil))
 }
 
 func advHandler(a ble.Advertisement) {
@@ -81,7 +77,7 @@ func advHandler(a ble.Advertisement) {
 	fmt.Printf("\n")
 }
 
-func chkErr(err error) {
+func chkErr(err error) error {
 	switch errors.Cause(err) {
 	case nil:
 	case context.DeadlineExceeded:
@@ -89,6 +85,7 @@ func chkErr(err error) {
 	case context.Canceled:
 		fmt.Printf("canceled\n")
 	default:
-		log.Fatalf(err.Error())
+		return err
 	}
+	return nil
 }

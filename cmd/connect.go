@@ -5,17 +5,22 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/go-ble/ble"
 	"github.com/go-ble/ble/examples/lib/dev"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
+type bleOptions struct {
+	device   string
+	duration time.Duration
+}
 type connectOptions struct {
-	device     string
-	duration   time.Duration
-	duplicates bool
+	bleOptions
+	addr string
 }
 
 func defaultConnectOptions() *connectOptions {
@@ -26,30 +31,64 @@ func newConnectCmd() *cobra.Command {
 	o := defaultConnectOptions()
 
 	cmd := &cobra.Command{
-		Use:          "connect",
-		Short:        "List discoverable Zengge LED devices",
+		Use:          "connect [addr]",
+		Short:        "Connect to device by MAC address",
 		SilenceUsage: true,
+		Args:         cobra.ExactArgs(1),
 		RunE:         o.run,
 	}
 
 	cmd.Flags().StringVarP(&o.device, "device", "d", "default", "implementation of ble")
 	cmd.Flags().DurationVarP(&o.duration, "duration", "w", 5*time.Second, "scanning duration")
-	cmd.Flags().BoolVarP(&o.duplicates, "dup", "", true, "allow duplicate reported")
 
 	return cmd
 }
 
 func (o *connectOptions) run(cmd *cobra.Command, args []string) error {
+	err := o.parseArgs(args)
+	if err != nil {
+		return err
+	}
+
 	d, err := dev.NewDevice(o.device)
 	if err != nil {
 		log.Fatalf("can't new device : %s", err)
 	}
 	ble.SetDefaultDevice(d)
 
-	// Scan for specified durantion, or until interrupted by user.
-	fmt.Printf("Scanning for %s...\n", o.duration)
+	filter := func(a ble.Advertisement) bool {
+		return strings.ToUpper(a.Addr().String()) == strings.ToUpper(o.addr)
+	}
+
+	// Scan for device
+	log.Printf("Connecting to %s...\n", o.addr)
 	ctx := ble.WithSigHandler(context.WithTimeout(context.Background(), o.duration))
-	chkErr(ble.Scan(ctx, o.duplicates, advHandler, nil))
+	client, err := ble.Connect(ctx, filter)
+	err = checkConnectErr(err)
+	if err != nil {
+		return err
+	}
+
+	for {
+		fmt.Printf("Client side RSSI: %d\n", client.ReadRSSI())
+		time.Sleep(time.Second)
+	}
 
 	return nil
+}
+
+func (o *connectOptions) parseArgs(args []string) error {
+	o.addr = args[0]
+	return nil
+}
+
+func checkConnectErr(err error) error {
+	switch errors.Cause(err) {
+	case nil:
+		return nil
+	case context.DeadlineExceeded:
+		return fmt.Errorf("Connection time out...")
+	default:
+		return err
+	}
 }
