@@ -5,12 +5,10 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"strings"
 	"time"
 
 	"github.com/go-ble/ble"
 	"github.com/go-ble/ble/examples/lib/dev"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -56,15 +54,10 @@ func (o *connectOptions) run(cmd *cobra.Command, args []string) error {
 	}
 	ble.SetDefaultDevice(d)
 
-	filter := func(a ble.Advertisement) bool {
-		return strings.ToUpper(a.Addr().String()) == strings.ToUpper(o.addr)
-	}
-
-	// Scan for device
 	log.Printf("Connecting to %s...\n", o.addr)
 	ctx := ble.WithSigHandler(context.WithTimeout(context.Background(), o.duration))
-	client, err := ble.Connect(ctx, filter)
-	err = checkConnectErr(err)
+	// Dial directly, skip Connect - it's slower (as it scans) and DOESN'T EVEN WORK!... https://github.com/go-ble/ble/pull/112
+	client, err := ble.Dial(ctx, ble.NewAddr(o.addr))
 	if err != nil {
 		return err
 	}
@@ -80,15 +73,4 @@ func (o *connectOptions) run(cmd *cobra.Command, args []string) error {
 func (o *connectOptions) parseArgs(args []string) error {
 	o.addr = args[0]
 	return nil
-}
-
-func checkConnectErr(err error) error {
-	switch errors.Cause(err) {
-	case nil:
-		return nil
-	case context.DeadlineExceeded:
-		return fmt.Errorf("Connection time out...")
-	default:
-		return err
-	}
 }
