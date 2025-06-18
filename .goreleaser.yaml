@@ -7,15 +7,22 @@ before:
     # - go generate ./...
 
 builds:
-  - env:
-      - CGO_ENABLED=1
+  - &x-build
+    env:
+      - CGO_ENABLED=0
     ldflags: -s -w -X main.version={{ .Version }}
     goos:
       - linux
-      #- darwin
     goarch:
       - amd64
       - arm64
+  
+  - <<: *x-build
+    id: zengge-led-ctl_cgo
+    env:
+      - CGO_ENABLED=1
+    goos:
+      - darwin
 
 archives:
   - format: tar.gz
