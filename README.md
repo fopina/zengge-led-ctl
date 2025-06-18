@@ -8,9 +8,10 @@
 [![codecov](https://codecov.io/github/fopina/zengge-led-ctl/graph/badge.svg)](https://codecov.io/github/fopina/zengge-led-ctl)
 
 
-CLI to add/multiply integers.
+CLI controller for Zengge LED devices.
 
-**BASED OFF - https://github.com/8none1/zengge_lednetwf/**
+> All thanks to the great research work of @8none1  
+> https://github.com/8none1/zengge_lednetwf/
 
 ## Usage
 
