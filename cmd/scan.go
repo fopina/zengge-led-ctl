@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/fopina/zengge-led-ctl/pkg/dev"
 	"github.com/go-ble/ble"
-	"github.com/go-ble/ble/examples/lib/dev"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
