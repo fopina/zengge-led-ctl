@@ -3,22 +3,26 @@ version: 2
 before:
   hooks:
     - go mod tidy
-    # TODO: you may remove this if you don't need go generate
-    - go generate ./...
+    # nothing to generate (for now)
+    # - go generate ./...
 
 builds:
-  - env:
+  - &x-build
+    env:
       - CGO_ENABLED=0
-    # TODO: customize binary name if not the same as repository
-    # binary: golang-template
     ldflags: -s -w -X main.version={{ .Version }}
     goos:
       - linux
-      - windows
-      - darwin
     goarch:
       - amd64
       - arm64
+  
+  - <<: *x-build
+    id: zengge-led-ctl_cgo
+    env:
+      - CGO_ENABLED=1
+    goos:
+      - darwin
 
 archives:
   - format: tar.gz
@@ -29,10 +33,6 @@ archives:
       {{- else if eq .Arch "386" }}i386
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
-    # use zip for windows archives
-    format_overrides:
-      - goos: windows
-        format: zip
 
 changelog:
   sort: asc
@@ -41,7 +41,6 @@ changelog:
       - "^docs:"
       - "^test:"
 
-# TODO: make sure {{.ProjectName}} is the right github repository
 dockers:
 - image_templates:
   - 'ghcr.io/fopina/{{.ProjectName}}:{{ .Tag }}-amd64'

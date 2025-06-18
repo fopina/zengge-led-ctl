@@ -8,7 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestExampleCommand(t *testing.T) {
+func TestScanCommand(t *testing.T) {
+	// TODO: mock go-ble to be able to test anything at all
 	testCases := []struct {
 		name     string
 		args     []string
@@ -16,33 +17,15 @@ func TestExampleCommand(t *testing.T) {
 		err      bool
 	}{
 		{
-			name:     "normal multiply",
-			args:     []string{"2", "3", "--multiply"},
-			expected: "6\n",
-			err:      false,
-		},
-		{
-			name:     "invalid multiply",
-			args:     []string{"2", "s", "--multiply"},
-			expected: "",
-			err:      true,
-		},
-		{
-			name:     "valid add",
-			args:     []string{"2", "3", "-a"},
-			expected: "5\n",
-			err:      false,
-		},
-		{
-			name:     "invalid add",
-			args:     []string{"s", "3", "-a"},
+			name:     "placeholder",
+			args:     []string{"--invalid"},
 			expected: "",
 			err:      true,
 		},
 	}
 
 	for _, tc := range testCases {
-		cmd := newExampleCmd()
+		cmd := newScanCmd()
 		b := bytes.NewBufferString("")
 
 		cmd.SetArgs(tc.args)

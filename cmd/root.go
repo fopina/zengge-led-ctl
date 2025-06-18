@@ -8,16 +8,16 @@ import (
 
 func newRootCmd(version string) *cobra.Command {
 	cmd := &cobra.Command{
-		// TODO: update name
-		Use:   "golang-template",
-		Short: "golang project template demo application",
+		Use:   "zengge-led-ctl",
+		Short: "CLI controller for Zengge LED devices",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return cmd.Help()
 		},
 	}
 
-	cmd.AddCommand(newVersionCmd(version)) // version subcommand
-	cmd.AddCommand(newExampleCmd())        // example subcommand
+	cmd.AddCommand(newVersionCmd(version))
+	cmd.AddCommand(newScanCmd())
+	cmd.AddCommand(newConnectCmd())
 
 	return cmd
 }
@@ -25,7 +25,7 @@ func newRootCmd(version string) *cobra.Command {
 // Execute invokes the command.
 func Execute(version string) error {
 	if err := newRootCmd(version).Execute(); err != nil {
-		return fmt.Errorf("error executing root command: %w", err)
+		return fmt.Errorf("error executing command: %w", err)
 	}
 
 	return nil
