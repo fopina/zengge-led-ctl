@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/fopina/golang-template/internal/convert"
-	"github.com/fopina/golang-template/pkg/example"
+	"github.com/fopina/zengge-led-ctl/internal/convert"
+	"github.com/fopina/zengge-led-ctl/pkg/example"
 	"github.com/spf13/cobra"
 )
 

@@ -1,4 +1,4 @@
-module github.com/fopina/golang-template
+module github.com/fopina/zengge-led-ctl
 
 go 1.21
 
