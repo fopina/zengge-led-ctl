@@ -44,6 +44,8 @@ Template based off another template: [FalcoSuessgott/golang-cli-template](https:
 
 CLI to add/multiply integers.
 
+**BASED OFF - https://github.com/8none1/zengge_lednetwf/**
+
 ## Usage
 
 ```sh
