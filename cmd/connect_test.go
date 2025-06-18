@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestScanCommand(t *testing.T) {
+func TestConnectCommand(t *testing.T) {
 	// TODO: mock go-ble to be able to test anything at all
 	testCases := []struct {
 		name     string
@@ -25,7 +25,7 @@ func TestScanCommand(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		cmd := newScanCmd()
+		cmd := newConnectCmd()
 		b := bytes.NewBufferString("")
 
 		cmd.SetArgs(tc.args)
