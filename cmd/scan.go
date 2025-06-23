@@ -2,14 +2,11 @@
 package cmd
 
 import (
-	"context"
 	"fmt"
-	"strings"
 	"time"
 
-	"github.com/fopina/zengge-led-ctl/pkg/dev"
+	"github.com/fopina/zengge-led-ctl/pkg/client"
 	"github.com/go-ble/ble"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -40,23 +37,16 @@ func newScanCmd() *cobra.Command {
 }
 
 func (o *scanOptions) run(cmd *cobra.Command, args []string) error {
-	d, err := dev.NewDevice(o.device)
+	c, err := client.NewZenggeClient(o.device)
 	if err != nil {
-		return fmt.Errorf("can't new device : %s", err)
+		return err
 	}
-	ble.SetDefaultDevice(d)
-
 	// Scan for specified durantion, or until interrupted by user.
 	fmt.Printf("Scanning for %s...\n", o.duration)
-	ctx := ble.WithSigHandler(context.WithTimeout(context.Background(), o.duration))
-	return chkErr(ble.Scan(ctx, o.duplicates, advHandler, nil))
+	return c.Scan(o.duration, o.duplicates, scanHandler)
 }
 
-func advHandler(a ble.Advertisement) {
-	if !strings.HasPrefix(a.LocalName(), "LEDnetWF") {
-		return
-	}
-
+func scanHandler(a ble.Advertisement) {
 	if a.Connectable() {
 		fmt.Printf("[%s] C %3d:", a.Addr(), a.RSSI())
 	} else {
@@ -75,17 +65,4 @@ func advHandler(a ble.Advertisement) {
 		fmt.Printf("%s MD: %X", comma, a.ManufacturerData())
 	}
 	fmt.Printf("\n")
-}
-
-func chkErr(err error) error {
-	switch errors.Cause(err) {
-	case nil:
-	case context.DeadlineExceeded:
-		fmt.Printf("done\n")
-	case context.Canceled:
-		fmt.Printf("canceled\n")
-	default:
-		return err
-	}
-	return nil
 }

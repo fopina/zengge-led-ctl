@@ -7,7 +7,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/fopina/zengge-led-ctl/pkg/dev"
+	"github.com/fopina/zengge-led-ctl/pkg/client"
 	"github.com/go-ble/ble"
 	"github.com/spf13/cobra"
 )
@@ -67,11 +67,10 @@ func (o *connectOptions) run(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	d, err := dev.NewDevice(o.device)
+	c, err = client.NewZenggeClient(o.device)
 	if err != nil {
-		log.Fatalf("can't new device : %s", err)
+		return err
 	}
-	ble.SetDefaultDevice(d)
 
 	log.Printf("Connecting to %s...\n", o.addr)
 	ctx := ble.WithSigHandler(context.WithTimeout(context.Background(), o.duration))
