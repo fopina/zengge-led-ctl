@@ -76,10 +76,12 @@ func (o *connectOptions) run(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	time.Sleep(5 * time.Second)
+
 	err = c.PowerOff()
 	if err != nil {
 		return err
 	}
+	time.Sleep(5 * time.Second)
 
 	return nil
 }
