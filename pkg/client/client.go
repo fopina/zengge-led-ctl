@@ -112,6 +112,11 @@ func (c *ZenggeClient) PowerOn() error {
 	return c.client.WriteCharacteristic(c.writeChar, c.preparePacket(PowerOnPacket), false)
 }
 
+// SetWhite Set LED color to white
+func (c *ZenggeClient) SetWhite() error {
+	return c.client.WriteCharacteristic(c.writeChar, c.preparePacket(WhitePacket), false)
+}
+
 func chkScanErr(err error) error {
 	switch errors.Cause(err) {
 	case nil:
