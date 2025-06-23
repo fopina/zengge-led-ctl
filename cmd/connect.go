@@ -65,21 +65,28 @@ func (o *connectOptions) run(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-
-	err = c.SendInitialPacket()
-	if err != nil {
-		return err
-	}
-	time.Sleep(5 * time.Second)
-	err = c.GetStripSettings()
-	if err != nil {
-		return err
-	}
-	time.Sleep(5 * time.Second)
+	/*
+		err = c.SendInitialPacket()
+		if err != nil {
+			return err
+		}
+		time.Sleep(5 * time.Second)
+		err = c.GetStripSettings()
+		if err != nil {
+			return err
+		}
+		time.Sleep(5 * time.Second)
+	*/
 	err = c.PowerOff()
 	if err != nil {
 		return err
 	}
+	time.Sleep(5 * time.Second)
+	err = c.PowerOn()
+	if err != nil {
+		return err
+	}
+	time.Sleep(5 * time.Second)
 
 	return nil
 }

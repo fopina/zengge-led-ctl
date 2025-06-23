@@ -12,11 +12,12 @@ import (
 )
 
 type ZenggeClient struct {
-	deviceName string
-	device     ble.Device
-	client     ble.Client
-	notifyChar *ble.Characteristic
-	writeChar  *ble.Characteristic
+	deviceName    string
+	device        ble.Device
+	client        ble.Client
+	notifyChar    *ble.Characteristic
+	writeChar     *ble.Characteristic
+	packetCounter uint16
 }
 
 func NewZenggeClient(device string) (*ZenggeClient, error) {
@@ -26,8 +27,9 @@ func NewZenggeClient(device string) (*ZenggeClient, error) {
 	}
 	ble.SetDefaultDevice(d)
 	return &ZenggeClient{
-		deviceName: device,
-		device:     d,
+		deviceName:    device,
+		device:        d,
+		packetCounter: 0,
 	}, nil
 }
 
@@ -80,19 +82,33 @@ func (c *ZenggeClient) Subscribe(handler ble.NotificationHandler) error {
 	return c.client.Subscribe(c.notifyChar, false, notificationhandler)
 }
 
-// SendInitialPackage ??? TBD what this is...
+// SendInitialPackage ??? TBD what this is and when is it required.....
 func (c *ZenggeClient) SendInitialPacket() error {
-	return c.client.WriteCharacteristic(c.writeChar, InitialPacket, false)
+	InitialPacket[0] = 0x0
+	return c.client.WriteCharacteristic(c.writeChar, c.preparePacket(InitialPacket), false)
 }
 
 // GetStripSettings ??? TBD what this is...
 func (c *ZenggeClient) GetStripSettings() error {
-	return c.client.WriteCharacteristic(c.writeChar, GetStripSettingsPacket, false)
+	return c.client.WriteCharacteristic(c.writeChar, c.preparePacket(GetStripSettingsPacket), false)
+}
+
+// preparePacket updates the counter bytes (first two) of a packet IN PLACE and returns the same reference
+func (c *ZenggeClient) preparePacket(packet []byte) []byte {
+	c.packetCounter++
+	packet[0] = byte(c.packetCounter >> 8)
+	packet[1] = byte(c.packetCounter)
+	return packet
 }
 
 // PowerOff Power off the LED strip
 func (c *ZenggeClient) PowerOff() error {
-	return c.client.WriteCharacteristic(c.writeChar, PowerOffPacket, false)
+	return c.client.WriteCharacteristic(c.writeChar, c.preparePacket(PowerOffPacket), false)
+}
+
+// PowerOn Power on the LED strip
+func (c *ZenggeClient) PowerOn() error {
+	return c.client.WriteCharacteristic(c.writeChar, c.preparePacket(PowerOnPacket), false)
 }
 
 func chkScanErr(err error) error {
