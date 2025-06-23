@@ -95,6 +95,7 @@ func (c *ZenggeClient) GetStripSettings() error {
 
 // preparePacket updates the counter bytes (first two) of a packet IN PLACE and returns the same reference
 func (c *ZenggeClient) preparePacket(packet []byte) []byte {
+	// counter seems to be ignored but let's pretend it is not
 	c.packetCounter++
 	packet[0] = byte(c.packetCounter >> 8)
 	packet[1] = byte(c.packetCounter)
