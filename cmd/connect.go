@@ -67,11 +67,13 @@ func (o *connectOptions) run(cmd *cobra.Command, args []string) error {
 	}
 
 	// err = c.SendInitialPacket()
-	err = c.SetWhite()
+	err = c.SetRGB(3, 252, 102)
 	if err != nil {
 		return err
 	}
+	c.PowerOn()
 	time.Sleep(5 * time.Second)
+	c.PowerOff()
 
 	// err = c.GetStripSettings()
 	// if err != nil {
