@@ -17,6 +17,8 @@ builds:
   
   - <<: *x-build
     id: zengge-led-ctl_cgo
+    env:
+      - CGO_ENABLED=0
     goos:
       - darwin
 
