@@ -14,13 +14,11 @@ builds:
     goarch:
       - amd64
       - arm64
-    cgo: false
   
-  - <<: *x-build
-    id: zengge-led-ctl_cgo
-    cgo: true
-    goos:
-      - darwin
+  # - <<: *x-build
+  #   id: zengge-led-ctl_cgo
+  #   goos:
+  #     - darwin
 
 archives:
   - format: tar.gz
