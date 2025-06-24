@@ -67,7 +67,7 @@ func (o *connectOptions) run(cmd *cobra.Command, args []string) error {
 	}
 
 	// err = c.SendInitialPacket()
-	err = c.SetRGB(3, 252, 102)
+	err = c.SetRGB(28, 9, 9)
 	if err != nil {
 		return err
 	}

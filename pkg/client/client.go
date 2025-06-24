@@ -121,13 +121,10 @@ func (c *ZenggeClient) SetWhite() error {
 // SetRGB Set LED color to color defined by RGB
 func (c *ZenggeClient) SetRGB(red byte, green byte, blue byte) error {
 	packet := c.preparePacket(HsvPacket)
-	h, s, v := utils.RGBToHSV(red, green, blue)
-	hi := byte(int(h*360) / 2)
-	si := byte(s * 100)
-	vi := byte(v * 100)
-	packet[10] = hi
-	packet[11] = si
-	packet[12] = vi
+	h, s, v := utils.RGBToHSV_bytes(red, green, blue)
+	packet[10] = h
+	packet[11] = s
+	packet[12] = v
 	return c.client.WriteCharacteristic(c.writeChar, packet, false)
 }
 

@@ -40,3 +40,12 @@ func RGBToHSV(r, g, b uint8) (h, s, v float64) {
 
 	return
 }
+
+// RGBToHSV_bytes Convert RGB code to HSV, truncated to bytes
+func RGBToHSV_bytes(r, g, b uint8) (h, s, v byte) {
+	hf, sf, vf := RGBToHSV(r, g, b)
+	h = byte(int(hf) / 2)
+	s = byte(sf * 100)
+	v = byte(vf * 100)
+	return
+}
