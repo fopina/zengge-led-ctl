@@ -1,28 +1,27 @@
-// based off https://github.com/go-ble/ble/blob/master/examples/basic/scanner/main.go
 package cmd
 
 import (
-	"fmt"
 	"log"
-	"strings"
 	"time"
 
 	"github.com/fopina/zengge-led-ctl/pkg/client"
 	"github.com/spf13/cobra"
 )
 
-type powerOptions struct {
+type colorOptions struct {
 	connectOptions
-	state bool
+	red,
+	green,
+	blue byte
 }
 
-func newPowerCmd() *cobra.Command {
-	o := &powerOptions{}
+func newColorCmd() *cobra.Command {
+	o := &colorOptions{}
 
 	cmd := &cobra.Command{
-		Use:   "power [addr] [state]",
-		Short: "Power device by MAC address, 1 for ON and 0 for OFF",
-		Args:  cobra.ExactArgs(2),
+		Use:   "color [addr] [red] [green] [blue]",
+		Short: "Set strip color by MAC address, using RGB (0-255)",
+		Args:  cobra.ExactArgs(4),
 		RunE:  o.run,
 	}
 
@@ -32,7 +31,7 @@ func newPowerCmd() *cobra.Command {
 	return cmd
 }
 
-func (o *powerOptions) run(cmd *cobra.Command, args []string) error {
+func (o *colorOptions) run(cmd *cobra.Command, args []string) error {
 	err := o.parseArgs(args)
 	if err != nil {
 		return err
@@ -49,24 +48,18 @@ func (o *powerOptions) run(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	if o.state {
-		return c.PowerOn()
-	}
-	return c.PowerOff()
-}
-
-func (o *powerOptions) parseArgs(args []string) error {
-	err := o.connectOptions.parseArgs(args)
+	err = c.SetRGB(o.red, o.green, o.blue)
 	if err != nil {
 		return err
 	}
-	switch strings.ToLower(args[1]) {
-	case "on", "1":
-		o.state = true
-	case "off", "0":
-		o.state = false
-	default:
-		return fmt.Errorf("invalid state: %s", args[1])
+	time.Sleep(5 * time.Second)
+	return c.PowerOn()
+}
+
+func (o *colorOptions) parseArgs(args []string) error {
+	err := o.connectOptions.parseArgs(args)
+	if err != nil {
+		return err
 	}
 	return nil
 }

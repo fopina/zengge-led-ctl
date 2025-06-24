@@ -19,6 +19,7 @@ func newRootCmd(version string) *cobra.Command {
 	cmd.AddCommand(newScanCmd())
 	cmd.AddCommand(newConnectCmd())
 	cmd.AddCommand(newPowerCmd())
+	cmd.AddCommand(newColorCmd())
 
 	return cmd
 }

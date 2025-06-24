@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/fopina/zengge-led-ctl/pkg/dev"
+	"github.com/fopina/zengge-led-ctl/pkg/utils"
 	"github.com/go-ble/ble"
 	"github.com/pkg/errors"
 )
@@ -110,6 +111,21 @@ func (c *ZenggeClient) PowerOff() error {
 // PowerOn Power on the LED strip
 func (c *ZenggeClient) PowerOn() error {
 	return c.client.WriteCharacteristic(c.writeChar, c.preparePacket(PowerOnPacket), false)
+}
+
+// SetWhite Set LED color to white
+func (c *ZenggeClient) SetWhite() error {
+	return c.client.WriteCharacteristic(c.writeChar, c.preparePacket(WhitePacket), false)
+}
+
+// SetRGB Set LED color to color defined by RGB
+func (c *ZenggeClient) SetRGB(red byte, green byte, blue byte) error {
+	packet := c.preparePacket(HsvPacket)
+	h, s, v := utils.RGBToHSV_bytes(red, green, blue)
+	packet[10] = h
+	packet[11] = s
+	packet[12] = v
+	return c.client.WriteCharacteristic(c.writeChar, packet, false)
 }
 
 func chkScanErr(err error) error {
