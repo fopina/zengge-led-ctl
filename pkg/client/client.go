@@ -43,6 +43,19 @@ type ZenggeAdvertisement struct {
 	MD          []byte
 }
 
+func (z ZenggeAdvertisement) String() string {
+	var b strings.Builder
+
+	b.WriteString(fmt.Sprintf("[%s] ", z.Addr))
+	if z.Connectable {
+		b.WriteString("C ")
+	} else {
+		b.WriteString("N ")
+	}
+	b.WriteString(fmt.Sprintf("%3d: Name %s, MD: %X", z.RSSI, z.Name, z.MD))
+	return b.String()
+}
+
 // ScanHandler handles Zengge advertisements.
 type ScanHandler func(a ZenggeAdvertisement)
 

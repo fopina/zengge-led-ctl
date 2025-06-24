@@ -45,18 +45,5 @@ func (o *scanOptions) run(cmd *cobra.Command, args []string) error {
 }
 
 func scanHandler(a client.ZenggeAdvertisement) {
-	if a.Connectable {
-		fmt.Printf("[%s] C %3d:", a.Addr, a.RSSI)
-	} else {
-		fmt.Printf("[%s] N %3d:", a.Addr, a.RSSI)
-	}
-	comma := ""
-	if len(a.Name) > 0 {
-		fmt.Printf(" Name: %s", a.Name)
-		comma = ","
-	}
-	if len(a.MD) > 0 {
-		fmt.Printf("%s MD: %X", comma, a.MD)
-	}
-	fmt.Printf("\n")
+	fmt.Println(a)
 }
