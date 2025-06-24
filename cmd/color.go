@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/fopina/zengge-led-ctl/pkg/client"
@@ -60,6 +61,14 @@ func (o *colorOptions) parseArgs(args []string) error {
 	err := o.connectOptions.parseArgs(args)
 	if err != nil {
 		return err
+	}
+	fields := []*byte{&o.red, &o.green, &o.blue}
+	for i := 0; i < 3; i++ {
+		val, err := strconv.ParseUint(args[i+1], 10, 8)
+		if err != nil {
+			return err
+		}
+		*fields[i] = byte(val)
 	}
 	return nil
 }
