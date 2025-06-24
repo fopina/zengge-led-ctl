@@ -1,4 +1,3 @@
-// based off https://github.com/go-ble/ble/blob/master/examples/basic/scanner/main.go
 package cmd
 
 import (
@@ -49,11 +48,6 @@ func (o *colorOptions) run(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	// c.PowerOn()
-	c.SendInitialPacket()
-	time.Sleep(5 * time.Second)
-	c.GetStripSettings()
-	time.Sleep(5 * time.Second)
 	err = c.SetWhite()
 	if err != nil {
 		return err
