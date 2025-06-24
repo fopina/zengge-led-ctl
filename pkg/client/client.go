@@ -34,12 +34,31 @@ func NewZenggeClient(device string) (*ZenggeClient, error) {
 	}, nil
 }
 
-func (c *ZenggeClient) Scan(duration time.Duration, duplicates bool, handler ble.AdvHandler) error {
+// ZenggeAdvertisement ...
+type ZenggeAdvertisement struct {
+	Name        string
+	Addr        ble.Addr
+	Connectable bool
+	RSSI        int
+	MD          []byte
+}
+
+// ScanHandler handles Zengge advertisements.
+type ScanHandler func(a ZenggeAdvertisement)
+
+func (c *ZenggeClient) Scan(duration time.Duration, duplicates bool, handler ScanHandler) error {
 	scanHandler := func(a ble.Advertisement) {
 		if !strings.HasPrefix(a.LocalName(), "LEDnetWF") {
 			return
 		}
-		handler(a)
+		adv := ZenggeAdvertisement{
+			Name:        a.LocalName(),
+			Addr:        a.Addr(),
+			Connectable: a.Connectable(),
+			RSSI:        a.RSSI(),
+			MD:          a.ManufacturerData(),
+		}
+		handler(adv)
 	}
 
 	ctx := ble.WithSigHandler(context.WithTimeout(context.Background(), duration))
@@ -105,12 +124,14 @@ func (c *ZenggeClient) preparePacket(packet []byte) []byte {
 
 // PowerOff Power off the LED strip
 func (c *ZenggeClient) PowerOff() error {
-	return c.client.WriteCharacteristic(c.writeChar, c.preparePacket(PowerOffPacket), false)
+	PowerPacket[9] = byte(PowerOffByte)
+	return c.client.WriteCharacteristic(c.writeChar, c.preparePacket(PowerPacket), false)
 }
 
 // PowerOn Power on the LED strip
 func (c *ZenggeClient) PowerOn() error {
-	return c.client.WriteCharacteristic(c.writeChar, c.preparePacket(PowerOnPacket), false)
+	PowerPacket[9] = byte(PowerOnByte)
+	return c.client.WriteCharacteristic(c.writeChar, c.preparePacket(PowerPacket), false)
 }
 
 // SetWhite Set LED color to white
