@@ -34,31 +34,6 @@ func NewZenggeClient(device string) (*ZenggeClient, error) {
 	}, nil
 }
 
-// ZenggeAdvertisement ...
-type ZenggeAdvertisement struct {
-	Name        string
-	Addr        ble.Addr
-	Connectable bool
-	RSSI        int
-	MD          []byte
-}
-
-func (z ZenggeAdvertisement) String() string {
-	var b strings.Builder
-
-	b.WriteString(fmt.Sprintf("[%s] ", z.Addr))
-	if z.Connectable {
-		b.WriteString("C ")
-	} else {
-		b.WriteString("N ")
-	}
-	b.WriteString(fmt.Sprintf("%3d: Name %s, MD: %X", z.RSSI, z.Name, z.MD))
-	return b.String()
-}
-
-// ScanHandler handles Zengge advertisements.
-type ScanHandler func(a ZenggeAdvertisement)
-
 func (c *ZenggeClient) Scan(duration time.Duration, duplicates bool, handler ScanHandler) error {
 	scanHandler := func(a ble.Advertisement) {
 		if !strings.HasPrefix(a.LocalName(), "LEDnetWF") {
