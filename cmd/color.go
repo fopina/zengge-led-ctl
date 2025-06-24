@@ -49,8 +49,17 @@ func (o *colorOptions) run(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	c.PowerOn()
-	return c.SetWhite()
+	// c.PowerOn()
+	c.SendInitialPacket()
+	time.Sleep(5 * time.Second)
+	c.GetStripSettings()
+	time.Sleep(5 * time.Second)
+	err = c.SetWhite()
+	if err != nil {
+		return err
+	}
+	time.Sleep(5 * time.Second)
+	return nil
 
 	//return c.SetRGB(o.red, o.green, o.blue)
 }
