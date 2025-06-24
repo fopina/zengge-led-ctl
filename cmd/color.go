@@ -48,14 +48,12 @@ func (o *colorOptions) run(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	err = c.SetWhite()
+	err = c.SetRGB(o.red, o.green, o.blue)
 	if err != nil {
 		return err
 	}
 	time.Sleep(5 * time.Second)
-	return nil
-
-	//return c.SetRGB(o.red, o.green, o.blue)
+	return c.PowerOn()
 }
 
 func (o *colorOptions) parseArgs(args []string) error {
