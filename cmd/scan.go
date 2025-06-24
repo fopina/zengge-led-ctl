@@ -23,10 +23,9 @@ func newScanCmd() *cobra.Command {
 	o := defaultScanOptions()
 
 	cmd := &cobra.Command{
-		Use:          "scan",
-		Short:        "List discoverable Zengge LED devices",
-		SilenceUsage: true,
-		RunE:         o.run,
+		Use:   "scan",
+		Short: "List discoverable Zengge LED devices",
+		RunE:  o.run,
 	}
 
 	cmd.Flags().StringVarP(&o.device, "device", "d", "default", "implementation of ble")

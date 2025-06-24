@@ -20,11 +20,10 @@ func newPowerCmd() *cobra.Command {
 	o := &powerOptions{}
 
 	cmd := &cobra.Command{
-		Use:          "power [addr] [state]",
-		Short:        "Power device by MAC address, 1 for ON and 0 for OFF",
-		SilenceUsage: true,
-		Args:         cobra.ExactArgs(2),
-		RunE:         o.run,
+		Use:   "power [addr] [state]",
+		Short: "Power device by MAC address, 1 for ON and 0 for OFF",
+		Args:  cobra.ExactArgs(2),
+		RunE:  o.run,
 	}
 
 	cmd.Flags().StringVarP(&o.device, "device", "d", "default", "implementation of ble")

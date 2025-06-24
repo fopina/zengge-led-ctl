@@ -11,18 +11,19 @@ import (
 
 type colorOptions struct {
 	connectOptions
-	color string
+	red,
+	green,
+	blue byte
 }
 
 func newColorCmd() *cobra.Command {
 	o := &colorOptions{}
 
 	cmd := &cobra.Command{
-		Use:          "power [addr] [state]",
-		Short:        "Power device by MAC address, 1 for ON and 0 for OFF",
-		SilenceUsage: true,
-		Args:         cobra.ExactArgs(2),
-		RunE:         o.run,
+		Use:   "color [addr] [red] [green] [blue]",
+		Short: "Set strip color by MAC address, using RGB (0-255)",
+		Args:  cobra.ExactArgs(4),
+		RunE:  o.run,
 	}
 
 	cmd.Flags().StringVarP(&o.device, "device", "d", "default", "implementation of ble")
@@ -47,7 +48,11 @@ func (o *colorOptions) run(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	return nil
+
+	c.PowerOn()
+	return c.SetWhite()
+
+	//return c.SetRGB(o.red, o.green, o.blue)
 }
 
 func (o *colorOptions) parseArgs(args []string) error {

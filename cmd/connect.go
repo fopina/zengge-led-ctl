@@ -27,11 +27,10 @@ func newConnectCmd() *cobra.Command {
 	o := defaultConnectOptions()
 
 	cmd := &cobra.Command{
-		Use:          "connect [addr]",
-		Short:        "Connect to device by MAC address",
-		SilenceUsage: true,
-		Args:         cobra.ExactArgs(1),
-		RunE:         o.run,
+		Use:   "connect [addr]",
+		Short: "Connect to device by MAC address",
+		Args:  cobra.ExactArgs(1),
+		RunE:  o.run,
 	}
 
 	cmd.Flags().StringVarP(&o.device, "device", "d", "default", "implementation of ble")
