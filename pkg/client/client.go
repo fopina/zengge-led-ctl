@@ -9,7 +9,6 @@ import (
 	cc "github.com/fopina/zengge-led-ctl/pkg/constants"
 	"github.com/fopina/zengge-led-ctl/pkg/dev"
 	"github.com/fopina/zengge-led-ctl/pkg/types"
-	"github.com/fopina/zengge-led-ctl/pkg/utils"
 	"github.com/go-ble/ble"
 	"github.com/pkg/errors"
 )
@@ -130,13 +129,18 @@ func (c *ZenggeClient) SetWhite() error {
 	return c.client.WriteCharacteristic(c.writeChar, c.preparePacket(cc.WhitePacket), false)
 }
 
+// SetRGBBytes Set LED color to color defined by RGB
+func (c *ZenggeClient) SetRGBBytes(red byte, green byte, blue byte) error {
+	return c.SetRGB(types.RGBColor{Red: red, Green: green, Blue: blue})
+}
+
 // SetRGB Set LED color to color defined by RGB
-func (c *ZenggeClient) SetRGB(red byte, green byte, blue byte) error {
+func (c *ZenggeClient) SetRGB(color types.RGBColor) error {
 	packet := c.preparePacket(cc.HsvPacket)
-	h, s, v := utils.RGBToHSV_bytes(red, green, blue)
-	packet[10] = h
-	packet[11] = s
-	packet[12] = v
+	hsv := color.ConvertToHSV()
+	packet[10] = hsv.Hue
+	packet[11] = hsv.Saturation
+	packet[12] = hsv.Value
 	return c.client.WriteCharacteristic(c.writeChar, packet, false)
 }
 

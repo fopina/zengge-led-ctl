@@ -49,7 +49,7 @@ func (o *colorOptions) run(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	return c.SetRGB(o.red, o.green, o.blue)
+	return c.SetRGBBytes(o.red, o.green, o.blue)
 }
 
 func (o *colorOptions) parseArgs(args []string) error {
