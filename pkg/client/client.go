@@ -45,6 +45,7 @@ func (c *ZenggeClient) Scan(duration time.Duration, duplicates bool, handler Sca
 			Connectable: a.Connectable(),
 			RSSI:        a.RSSI(),
 			MD:          a.ManufacturerData(),
+			Details:     NewZenggeAdvertisementDetails(a.ManufacturerData()),
 		}
 		handler(adv)
 	}
