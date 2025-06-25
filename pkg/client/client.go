@@ -6,7 +6,9 @@ import (
 	"strings"
 	"time"
 
+	cc "github.com/fopina/zengge-led-ctl/pkg/constants"
 	"github.com/fopina/zengge-led-ctl/pkg/dev"
+	"github.com/fopina/zengge-led-ctl/pkg/types"
 	"github.com/fopina/zengge-led-ctl/pkg/utils"
 	"github.com/go-ble/ble"
 	"github.com/pkg/errors"
@@ -34,18 +36,18 @@ func NewZenggeClient(device string) (*ZenggeClient, error) {
 	}, nil
 }
 
-func (c *ZenggeClient) Scan(duration time.Duration, duplicates bool, handler ScanHandler) error {
+func (c *ZenggeClient) Scan(duration time.Duration, duplicates bool, handler types.ScanHandler) error {
 	scanHandler := func(a ble.Advertisement) {
 		if !strings.HasPrefix(a.LocalName(), "LEDnetWF") {
 			return
 		}
-		adv := ZenggeAdvertisement{
+		adv := types.ZenggeAdvertisement{
 			Name:        a.LocalName(),
 			Addr:        a.Addr(),
 			Connectable: a.Connectable(),
 			RSSI:        a.RSSI(),
 			MD:          a.ManufacturerData(),
-			Details:     NewZenggeAdvertisementDetails(a.ManufacturerData()),
+			Details:     types.NewZenggeAdvertisementDetails(a.ManufacturerData()),
 		}
 		handler(adv)
 	}
@@ -68,13 +70,13 @@ func (c *ZenggeClient) Connect(addr string, duration time.Duration) error {
 		return fmt.Errorf("can't discover profile: %s", err)
 	}
 
-	notify := client.Profile().FindCharacteristic(ble.NewCharacteristic(ble.MustParse(NotifyUUID)))
+	notify := client.Profile().FindCharacteristic(ble.NewCharacteristic(ble.MustParse(cc.NotifyUUID)))
 	if notify == nil {
 		return fmt.Errorf("cannot find characteristic to subscribe")
 	}
 	c.notifyChar = notify
 
-	write := client.Profile().FindCharacteristic(ble.NewCharacteristic(ble.MustParse(WriteUUID)))
+	write := client.Profile().FindCharacteristic(ble.NewCharacteristic(ble.MustParse(cc.WriteUUID)))
 	if write == nil {
 		return fmt.Errorf("cannot find characteristic to write")
 	}
@@ -93,13 +95,13 @@ func (c *ZenggeClient) Subscribe(handler ble.NotificationHandler) error {
 
 // SendInitialPackage ??? TBD what this is and when is it required.....
 func (c *ZenggeClient) SendInitialPacket() error {
-	InitialPacket[0] = 0x0
-	return c.client.WriteCharacteristic(c.writeChar, c.preparePacket(InitialPacket), false)
+	cc.InitialPacket[0] = 0x0
+	return c.client.WriteCharacteristic(c.writeChar, c.preparePacket(cc.InitialPacket), false)
 }
 
 // GetStripSettings ??? TBD what this is...
 func (c *ZenggeClient) GetStripSettings() error {
-	return c.client.WriteCharacteristic(c.writeChar, c.preparePacket(GetStripSettingsPacket), false)
+	return c.client.WriteCharacteristic(c.writeChar, c.preparePacket(cc.GetStripSettingsPacket), false)
 }
 
 // preparePacket updates the counter bytes (first two) of a packet IN PLACE and returns the same reference
@@ -113,24 +115,24 @@ func (c *ZenggeClient) preparePacket(packet []byte) []byte {
 
 // PowerOff Power off the LED strip
 func (c *ZenggeClient) PowerOff() error {
-	PowerPacket[9] = byte(PowerOffByte)
-	return c.client.WriteCharacteristic(c.writeChar, c.preparePacket(PowerPacket), false)
+	cc.PowerPacket[9] = cc.PowerOffByte
+	return c.client.WriteCharacteristic(c.writeChar, c.preparePacket(cc.PowerPacket), false)
 }
 
 // PowerOn Power on the LED strip
 func (c *ZenggeClient) PowerOn() error {
-	PowerPacket[9] = byte(PowerOnByte)
-	return c.client.WriteCharacteristic(c.writeChar, c.preparePacket(PowerPacket), false)
+	cc.PowerPacket[9] = cc.PowerOnByte
+	return c.client.WriteCharacteristic(c.writeChar, c.preparePacket(cc.PowerPacket), false)
 }
 
 // SetWhite Set LED color to white
 func (c *ZenggeClient) SetWhite() error {
-	return c.client.WriteCharacteristic(c.writeChar, c.preparePacket(WhitePacket), false)
+	return c.client.WriteCharacteristic(c.writeChar, c.preparePacket(cc.WhitePacket), false)
 }
 
 // SetRGB Set LED color to color defined by RGB
 func (c *ZenggeClient) SetRGB(red byte, green byte, blue byte) error {
-	packet := c.preparePacket(HsvPacket)
+	packet := c.preparePacket(cc.HsvPacket)
 	h, s, v := utils.RGBToHSV_bytes(red, green, blue)
 	packet[10] = h
 	packet[11] = s

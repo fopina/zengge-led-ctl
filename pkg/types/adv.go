@@ -1,4 +1,4 @@
-package client
+package types
 
 import (
 	"encoding/binary"
@@ -6,6 +6,7 @@ import (
 	"net"
 	"strings"
 
+	c "github.com/fopina/zengge-led-ctl/pkg/constants"
 	"github.com/go-ble/ble"
 )
 
@@ -28,7 +29,7 @@ func NewZenggeAdvertisementDetails(data []byte) *ZenggeAdvertisementDetails {
 	d := &ZenggeAdvertisementDetails{
 		Firmware:    data[2],
 		MAC:         data[4:10],
-		On:          data[16] == PowerOnByte,
+		On:          data[16] == c.PowerOnByte,
 		Mode:        data[17],
 		Brightness:  binary.LittleEndian.Uint16(data[18:20]),
 		RGB:         data[20:23],
@@ -61,9 +62,6 @@ type ZenggeAdvertisement struct {
 	Details     *ZenggeAdvertisementDetails
 }
 
-// ScanHandler handles Zengge advertisements.
-type ScanHandler func(a ZenggeAdvertisement)
-
 func (z ZenggeAdvertisement) String() string {
 	var b strings.Builder
 
@@ -75,7 +73,11 @@ func (z ZenggeAdvertisement) String() string {
 	}
 	b.WriteString(fmt.Sprintf("%3d: Name %s", z.RSSI, z.Name))
 	if len(z.MD) > 0 {
-		b.WriteString(fmt.Sprintf(", MD: %X [%s]", z.MD, z.Details))
+		if z.Details == nil {
+			b.WriteString(fmt.Sprintf(" [MD: %X]", z.MD))
+		} else {
+			b.WriteString(fmt.Sprintf(" [%s]", z.Details))
+		}
 	}
 	return b.String()
 }

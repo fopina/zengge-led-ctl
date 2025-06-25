@@ -1,4 +1,4 @@
-package client
+package constants
 
 // all taken straight from https://github.com/8none1/zengge_lednetwf/blob/f72474c502ed15767b4fbbe8ef028fee980b9b11/ledwf_controller.py#L13
 const ServiceUUID = "0000ffff-0000-1000-8000-00805f9b34fb"

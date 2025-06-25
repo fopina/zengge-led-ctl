@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/fopina/zengge-led-ctl/pkg/client"
+	"github.com/fopina/zengge-led-ctl/pkg/types"
 	"github.com/spf13/cobra"
 )
 
@@ -44,6 +45,6 @@ func (o *scanOptions) run(cmd *cobra.Command, args []string) error {
 	return c.Scan(o.duration, o.duplicates, scanHandler)
 }
 
-func scanHandler(a client.ZenggeAdvertisement) {
+func scanHandler(a types.ZenggeAdvertisement) {
 	fmt.Println(a)
 }
