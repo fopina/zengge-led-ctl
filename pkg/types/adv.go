@@ -16,7 +16,7 @@ type ZenggeAdvertisementDetails struct {
 	On          bool
 	Mode        byte
 	Brightness  uint16
-	RGB         []byte
+	RGB         *RGBColor
 	Temperature uint8
 	LEDCount    uint8
 }
@@ -32,7 +32,7 @@ func NewZenggeAdvertisementDetails(data []byte) *ZenggeAdvertisementDetails {
 		On:          data[16] == c.PowerOnByte,
 		Mode:        data[17],
 		Brightness:  binary.LittleEndian.Uint16(data[18:20]),
-		RGB:         data[20:23],
+		RGB:         NewRGBColorBytes(data[20:23]),
 		Temperature: data[23],
 		LEDCount:    data[26],
 	}

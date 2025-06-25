@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/fopina/zengge-led-ctl/pkg/client"
+	"github.com/fopina/zengge-led-ctl/pkg/types"
 	"github.com/spf13/cobra"
 )
 
@@ -39,8 +40,8 @@ func newConnectCmd() *cobra.Command {
 	return cmd
 }
 
-func notificationhandler(req []byte) {
-	fmt.Printf("Notified: %q [ % X ]\n", string(req), req)
+func notificationhandler(not types.Notification) {
+	fmt.Printf("Notified: %s \n", not)
 }
 
 func (o *connectOptions) run(cmd *cobra.Command, args []string) error {

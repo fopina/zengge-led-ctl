@@ -83,10 +83,10 @@ func (c *ZenggeClient) Connect(addr string, duration time.Duration) error {
 	return nil
 }
 
-func (c *ZenggeClient) Subscribe(handler ble.NotificationHandler) error {
+func (c *ZenggeClient) Subscribe(handler types.NotificationHandler) error {
 	notificationhandler := func(req []byte) {
-		// TODO: implement parsing
-		handler(req)
+		not := types.NewNotification(req)
+		handler(not)
 	}
 
 	return c.client.Subscribe(c.notifyChar, false, notificationhandler)
