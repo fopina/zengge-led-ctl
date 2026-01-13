@@ -16,11 +16,11 @@ type colorOptions struct {
 	blue byte
 }
 
-func newColorCmd() *cobra.Command {
+func newColorRGBCmd() *cobra.Command {
 	o := &colorOptions{}
 
 	cmd := &cobra.Command{
-		Use:   "color [addr] [red] [green] [blue]",
+		Use:   "color-rgb [addr] [red] [green] [blue]",
 		Short: "Set strip color by MAC address, using RGB (0-255)",
 		Args:  cobra.ExactArgs(4),
 		RunE:  o.run,

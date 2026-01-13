@@ -15,11 +15,11 @@ type colorNameOptions struct {
 	name string
 }
 
-func newColorNameCmd() *cobra.Command {
+func newColorCmd() *cobra.Command {
 	o := &colorNameOptions{}
 
 	cmd := &cobra.Command{
-		Use:   "colorn [addr] [name]",
+		Use:   "color [addr] [name]",
 		Short: "Set strip color by MAC address, using a color name (e.g. red, green)",
 		Args:  cobra.ExactArgs(2),
 		RunE:  o.run,
