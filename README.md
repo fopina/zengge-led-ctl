@@ -27,6 +27,7 @@ Available Commands:
   connect     Connect to device by MAC address
   power       Power device by MAC address, 1 for ON and 0 for OFF
   color       Set strip color by MAC address, using RGB (0-255)
+  colorn      Set strip color by MAC address, using a color name (e.g. red, green)
   version     Display version
   help        Help about any command
 
@@ -61,6 +62,13 @@ Set color (RGB 0-255)
 ```sh
 $ zengge-led-ctl color AA:BB:CC:DD:EE:FF 255 64 0   # orange
 $ zengge-led-ctl color AA:BB:CC:DD:EE:FF 0 0 255    # blue
+```
+
+Set color by name
+```sh
+$ zengge-led-ctl colorn AA:BB:CC:DD:EE:FF red
+$ zengge-led-ctl colorn AA:BB:CC:DD:EE:FF teal
+$ zengge-led-ctl colorn AA:BB:CC:DD:EE:FF orange
 ```
 
 Connect (debug/demo)
