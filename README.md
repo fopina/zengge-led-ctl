@@ -14,47 +14,61 @@ CLI controller for Zengge LED devices.
 
 ## Usage
 
+Basic help
 ```sh
-➜  golang-template -h
-golang project template demo application
+$ zengge-led-ctl -h
+CLI controller for Zengge LED devices
 
 Usage:
-  golang-template [flags]
-  golang-template [command]
+  zengge-led-ctl [command]
 
 Available Commands:
-  completion  Generate the autocompletion script for the specified shell
-  example     example subcommand which adds or multiplies two given integers
-  help        Help about any command
+  scan        List discoverable Zengge LED devices
+  connect     Connect to device by MAC address
+  power       Power device by MAC address, 1 for ON and 0 for OFF
+  color       Set strip color by MAC address, using RGB (0-255)
   version     Display version
+  help        Help about any command
 
 Flags:
-  -h, --help   help for golang-template
+  -h, --help   help for zengge-led-ctl
 
-Use "golang-template completion [command] --help" for more information about a command.
+Use "zengge-led-ctl [command] --help" for more information about a command.
 ```
 
+Common flags
+- -d, --device string     BLE implementation to use (default "default")
+- -w, --duration duration Scanning/connection timeout (default 5s)
+
+Scan for devices
 ```sh
-➜  golang-template example 2 3 --add
-5
-➜  golang-template example 2 3 --multiply
-6
+# scan for 10 seconds (shows duplicates by default)
+$ zengge-led-ctl scan -w 10s
+Scanning for 10s...
+AA:BB:CC:DD:EE:FF [ZenggeLight] RSSI:-55 ...
+...
+```
+
+Power on/off
+```sh
+# using on/off
+$ zengge-led-ctl power AA:BB:CC:DD:EE:FF on
+# or using 1/0
+$ zengge-led-ctl power AA:BB:CC:DD:EE:FF 0
+```
+
+Set color (RGB 0-255)
+```sh
+$ zengge-led-ctl color AA:BB:CC:DD:EE:FF 255 64 0   # orange
+$ zengge-led-ctl color AA:BB:CC:DD:EE:FF 0 0 255    # blue
+```
+
+Connect (debug/demo)
+```sh
+# Connects, subscribes to notifications, fetches settings and powers the device off at the end
+$ zengge-led-ctl connect AA:BB:CC:DD:EE:FF
 ```
 
 ## Build
 
 Check out [CONTRIBUTING.md](CONTRIBUTING.md)
-
-### Makefile Targets
-```sh
-➜  make
-bootstrap                      install build deps
-build                          build golang binary
-clean                          clean up environment
-help                           list makefile targets
-install                        install golang binary
-race                           display test coverage with race
-run                            run the app
-snapshot                       goreleaser snapshot
-test                           display test coverage
-```
